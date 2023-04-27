@@ -1,0 +1,6 @@
+config:
+  motors-count: 5
+  functions:
+    - RESET_TO_ONE
+    - INCREMENT_BY_2
+    - RESET_TO_ONE
