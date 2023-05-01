@@ -24,17 +24,6 @@ namespace robot {
     robot_positions_products_{ robot_positions_hz * 2 / main_loop_hz } // double the expected size for every round
     {}
 
-  template <class Container>
-  ostream &dump_container(ostream &os, const Container &container) {
-    os << "{ ";
-    for (const auto &v : container) {
-      os << v;
-      os << " ";
-    }
-    os << "}";
-    return os;
-  }
-
   void brain_t::run() {
     running_ = true;
     motors_positions_worker_ = thread{ [this]() {
