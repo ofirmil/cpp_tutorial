@@ -6,6 +6,8 @@
 
 #include "optimus.h"
 
+PYBIND11_MAKE_OPAQUE(std::vector<double>);
+PYBIND11_MAKE_OPAQUE(std::vector<std::vector<double>>);
 int add(int i, int j) {
   return i + j;
 }
@@ -43,6 +45,8 @@ namespace py = pybind11;
 PYBIND11_MODULE(robot_brain, m) {
   // py::bind_vector<std::vector<double>>(m, "VectorDouble", py::buffer_protocol());
   // py::bind_vector<std::vector<double>>(m, "VectorVectorDouble", py::buffer_protocol());
+  py::bind_vector< std::vector<double> >(m, "VectorDouble");
+  py::bind_vector< std::vector<std::vector<double>> >(m, "VectorVectorDouble");
 
   m.doc() = "pybind11 robot brain plugin";  // optional module docstring
   m.def("add", &add, "A function that adds two numbers");

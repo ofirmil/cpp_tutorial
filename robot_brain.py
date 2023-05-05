@@ -7,7 +7,7 @@ def Log(robot_positions, motors_positions):
     if len(robot_positions) > 0:
         print(f"first robot pos {robot_positions[0]}")
         print(f"last robot pos {robot_positions[len(robot_positions) - 1]}")
-    return [3.1, 3.2, 3.3, 3.4, 3.5]
+    return robot_brain.VectorDouble([3.1, 3.2, 3.3, 3.4, 3.5])
 
 # res = robot_brain.add(7, 3)
 # print(f"robot_brain.add(7, 3) = {res}")
