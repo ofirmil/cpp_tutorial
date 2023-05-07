@@ -1,6 +1,7 @@
 #pragma once
 
 #include <random>
+
 #include "robot_types.h"
 
 namespace robot {

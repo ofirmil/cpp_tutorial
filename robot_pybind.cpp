@@ -1,16 +1,14 @@
 #include <pybind11/functional.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl_bind.h>
-#include <pybind11/stl.h>
+
 #include <iostream>
 
 #include "optimus.h"
 
 PYBIND11_MAKE_OPAQUE(std::vector<double>);
 PYBIND11_MAKE_OPAQUE(std::vector<std::vector<double>>);
-int add(int i, int j) {
-  return i + j;
-}
+int add(int i, int j) { return i + j; }
 
 namespace robot {
 struct Pet {
@@ -43,10 +41,11 @@ void calculate_motors_positions(
 namespace py = pybind11;
 
 PYBIND11_MODULE(robot_brain, m) {
-  // py::bind_vector<std::vector<double>>(m, "VectorDouble", py::buffer_protocol());
-  // py::bind_vector<std::vector<double>>(m, "VectorVectorDouble", py::buffer_protocol());
-  py::bind_vector< std::vector<double> >(m, "VectorDouble");
-  py::bind_vector< std::vector<std::vector<double>> >(m, "VectorVectorDouble");
+  // py::bind_vector<std::vector<double>>(m, "VectorDouble",
+  // py::buffer_protocol()); py::bind_vector<std::vector<double>>(m,
+  // "VectorVectorDouble", py::buffer_protocol());
+  py::bind_vector<std::vector<double>>(m, "VectorDouble");
+  py::bind_vector<std::vector<std::vector<double>>>(m, "VectorVectorDouble");
 
   m.doc() = "pybind11 robot brain plugin";  // optional module docstring
   m.def("add", &add, "A function that adds two numbers");
