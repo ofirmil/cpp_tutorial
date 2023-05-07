@@ -85,15 +85,15 @@ void brain_t::run() {
                 fn(move(motors_positions), move(robot_positions)));
 
             if (update_request->size() == config_.motors_count) {
-              // At this point expeced empty previous update request since
+              // At this point we exect an empty previous update request since
               // motors_positions_worker_ should have consumed previous update
               // request (based on assumption that main_loop_ will wait more
-              // than 100 ms until it's frequency timer will expire) option 2:
+              // than 100 ms until it's frequency timer will expire) option 1:
               // is to wait for response from motors_positions_t but requires
               // deadlock fix when stop() request from user is sent (optional
               // solutuion - first kill main_loop_ and then other threads, but
               // requires to have a different running_ flag for each thread)
-              // option 3: is to exchange the previous request even if it was
+              // option 2: is to exchange the previous request even if it was
               // not consumed by motors_positions_worker_ There is some logic to
               // option 3 since the user has received all previous locations and
               // may set update request according to them
