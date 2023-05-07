@@ -44,7 +44,7 @@ class atomic_consumer_producer_t {
       return false;
     } else {
       while (consume_index_ != produce_index) {
-        container.insert(container.cend(), move(products_[consume_index_]));
+        container.insert(container.cend(), std::move(products_[consume_index_]));
         advance(consume_index_);
       }
     }
