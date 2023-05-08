@@ -1,16 +1,16 @@
 #pragma once
 
-#include <string>
 #include <set>
+#include <string>
 
-using namespace std; 
+using namespace std;
 namespace robot {
-  struct robot_config_t {
-    robot_config_t();
-    robot_config_t(const std::string& yaml_path);
-    size_t motors_count;
-    set<string> functions; 
-  };
+struct robot_config_t {
+  robot_config_t();
+  robot_config_t(const std::string& yaml_path);
+  size_t motors_count;
+  set<string> functions;
+};
 
-  robot_config_t make_robot_config(const std::string& yaml_path);
-}
+robot_config_t make_robot_config(const std::string& yaml_path);
+}  // namespace robot

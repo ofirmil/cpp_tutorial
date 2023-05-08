@@ -1,48 +1,49 @@
 #pragma once
 
-#include <thread>
-#include <memory>
 #include <functional>
+#include <memory>
+#include <thread>
+
 #include "frequency_timer.h"
 
 namespace robot {
-  template <int Frequency>
-  class frequency_loop_thread_t : public std::thread {
-  public:
-    using work_func_t = typename std::function<void(void)>;
+template <int Frequency>
+class frequency_loop_thread_t : public std::thread {
+ public:
+  using work_func_t = typename std::function<void(void)>;
 
-    frequency_loop_thread_t() = default;
-  
-    template<typename Callable, typename... Args>
-    frequency_loop_thread_t(Callable&& work, Args&& ...args) {
-      change_work(std::forward<Callable>(work), std::forward<Args>(args)...);
+  frequency_loop_thread_t() = default;
 
-      auto loop = [this](){
-        frequency_timer_t<Frequency> timer;
+  template <typename Callable, typename... Args>
+  frequency_loop_thread_t(Callable&& work, Args&&... args) {
+    change_work(std::forward<Callable>(work), std::forward<Args>(args)...);
 
-        // Copy work_ to local work to avoid race when work_ is replaced from another thread
-        for(auto work = work_.load(); work; work = work_.load()) {
-          (*work)();
-          timer.wait();
-        }
-     };
+    auto loop = [this]() {
+      frequency_timer_t<Frequency> timer;
 
-      static_cast<std::thread&>(*this) = std::thread{loop};
-    }
+      // Copy work_ to local work to avoid race when work_ is replaced from
+      // another thread
+      for (auto work = work_.load(); work; work = work_.load()) {
+        (*work)();
+        timer.wait();
+      }
+    };
 
-    void stop_request() {
-      work_.store(nullptr);
-    }  
+    static_cast<std::thread&>(*this) = std::thread{loop};
+  }
 
-    template<typename Callable, typename... Args>
-    void change_work(Callable&& work, Args&& ...args) {
-      work_.store(make_shared<work_func_t>(std::bind(std::forward<Callable>(work), std::forward<Args>(args)...)));
-    }  
+  void stop_request() { work_.store(nullptr); }
 
-    virtual ~frequency_loop_thread_t() = default;
-  
-  private:
-      std::atomic<std::shared_ptr<work_func_t> > work_;
-  };
+  template <typename Callable, typename... Args>
+  void change_work(Callable&& work, Args&&... args) {
+    work_.store(make_shared<work_func_t>(
+        std::bind(std::forward<Callable>(work), std::forward<Args>(args)...)));
+  }
 
-} // namespace robot
+  virtual ~frequency_loop_thread_t() = default;
+
+ private:
+  std::atomic<std::shared_ptr<work_func_t> > work_;
+};
+
+}  // namespace robot

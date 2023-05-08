@@ -10,7 +10,7 @@ CXX_COMPILER := g++
 CXX_FLAGS := -std=c++20 -Wfatal-errors -Wall -Wextra -Werror -O3 -fPIC
 CXX_FLAGS_STATIC := -std=c++20 -Wfatal-errors -Wall -Wextra -Werror -O0 -gdwarf
 
-SRC_FILES := robot_config.cpp motors_positions_generator.cpp robot_position_generator.cpp optimus.cpp
+SRC_FILES := robot_config.cpp motors_positions_generator.cpp robot_position_generator.cpp optimus.cpp robot_pybind.cpp
 OBJS := $(addprefix build/shared/,$(SRC_FILES:.cpp=.o))
 STATIC_OBJS := $(addprefix build/static/,$(SRC_FILES:.cpp=.o))
 

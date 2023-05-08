@@ -1,12 +1,14 @@
 #include <pybind11/functional.h>
 #include <pybind11/pybind11.h>
-#include <pybind11/stl.h>
+#include <pybind11/stl_bind.h>
+
+#include <iostream>
 
 #include "optimus.h"
 
-int add(int i, int j) {
-  return i + j;
-}
+PYBIND11_MAKE_OPAQUE(std::vector<double>);
+PYBIND11_MAKE_OPAQUE(std::vector<std::vector<double>>);
+int add(int i, int j) { return i + j; }
 
 namespace robot {
 struct Pet {
@@ -19,25 +21,48 @@ struct Pet {
 };
 }  // namespace robot
 
-void calculate_motor_positions(
+template <class Container>
+ostream &dump_container(ostream &os, const Container &container) {
+  os << "{ ";
+  for (const auto &v : container) {
+    os << v;
+    os << " ";
+  }
+  os << "}";
+  return os;
+}
+
+void calculate_motors_positions(
     const std::function<std::vector<double>()> &functor) {
   std::vector<double> res = functor();
-  robot::dump_container(std::cout, res);
+  dump_container(std::cout, res);
 }
 
 namespace py = pybind11;
+
 PYBIND11_MODULE(robot_brain, m) {
+  // py::bind_vector<std::vector<double>>(m, "VectorDouble",
+  // py::buffer_protocol()); py::bind_vector<std::vector<double>>(m,
+  // "VectorVectorDouble", py::buffer_protocol());
+  py::bind_vector<std::vector<double>>(m, "VectorDouble");
+  py::bind_vector<std::vector<std::vector<double>>>(m, "VectorVectorDouble");
+
   m.doc() = "pybind11 robot brain plugin";  // optional module docstring
   m.def("add", &add, "A function that adds two numbers");
-  m.def("calculate_motor_positions", &calculate_motor_positions,
-        "calculate the motor_positions");
 
   using namespace robot;
   py::class_<Pet>(m, "Pet")
       .def(py::init<const std::string &>())
       .def("setName", &Pet::setName)
       .def("getName", &Pet::getName);
-  m.def("calculate_motors_pos") py::class_<::robot::brain_t>(m, "brain_t")
+
+  py::class_<::robot::brain_t>(m, "brain_t")
       .def(py::init<const std::string &>())
-      .def("set_net_function", &robot::brain_t::set_net_function);
+      .def("run", &robot::brain_t::run,
+           py::call_guard<py::gil_scoped_release>())
+      .def("stop", &robot::brain_t::stop,
+           py::call_guard<py::gil_scoped_release>())
+      .def("set_net_function", &robot::brain_t::set_net_function,
+           py::call_guard<py::gil_scoped_release>())
+      .def("set_active_net_function", &robot::brain_t::set_active_net_function);
 }
