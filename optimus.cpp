@@ -133,6 +133,7 @@ void brain_t::run() {
 
 void brain_t::stop() {
   running_ = false;
+
   for (auto th :
        {&main_loop_, &motors_positions_worker_, &robot_positions_worker_}) {
     if (th->joinable()) {
