@@ -58,8 +58,11 @@ PYBIND11_MODULE(robot_brain, m) {
 
   py::class_<::robot::brain_t>(m, "brain_t")
       .def(py::init<const std::string &>())
-      .def("run", &robot::brain_t::run)
-      .def("stop", &robot::brain_t::stop)
-      .def("set_net_function", &robot::brain_t::set_net_function)
+      .def("run", &robot::brain_t::run,
+           py::call_guard<py::gil_scoped_release>())
+      .def("stop", &robot::brain_t::stop,
+           py::call_guard<py::gil_scoped_release>())
+      .def("set_net_function", &robot::brain_t::set_net_function,
+           py::call_guard<py::gil_scoped_release>())
       .def("set_active_net_function", &robot::brain_t::set_active_net_function);
 }
