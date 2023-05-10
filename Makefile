@@ -14,7 +14,7 @@ SRC_FILES := robot_config.cpp motors_positions_generator.cpp robot_position_gene
 OBJS := $(addprefix build/shared/,$(SRC_FILES:.cpp=.o))
 STATIC_OBJS := $(addprefix build/static/,$(SRC_FILES:.cpp=.o))
 
-HEADER_FILES := robot_config.h frequency_timer.h atomic_consumer_producer.h frequency_loop_thread.h optimus.h motors_positions_generator.h robot_types.h robot_position_generator.h
+HEADER_FILES := robot_config.h frequency_timer.h atomic_consumer_producer.h optimus.h motors_positions_generator.h robot_types.h robot_position_generator.h
 ROBOT_LIB_NAME := robot_brain$(PYTHON3_LIB_EXT)
 ROBOT_LIB := build/shared/$(ROBOT_LIB_NAME)
 
@@ -71,9 +71,6 @@ build/tests/optimus_test: build/static/liboptimus.a tests/optimus_test.cpp | bui
 
 frequency_test:
 	gcc -Wfatal-errors -Wall -Wextra -Werror -std=c++20 -gdwarf -I./ tests/frequency_test.cpp -lstdc++ -lgtest -o build/tests/frequency_test
-
-frequency_loop_thread_test:
-	gcc -Wfatal-errors -Wall -Wextra -Werror -std=c++20 -gdwarf -I./ tests/frequency_loop_thread_test.cpp -lstdc++ -lgtest -o build/tests/frequency_loop_thread_test
 
 .PHONY: config_test
 config_test: build/tests/config_test
