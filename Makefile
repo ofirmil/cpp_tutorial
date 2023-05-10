@@ -29,8 +29,8 @@ optimus: $(ROBOT_LIB)
 # $(ROBOT_LIB): $(SRC_FILES) $(HEADER_FILES)
 # 	g++ $(CXX_FLAGS) -shared $(PYBIND11_INCLUDES) -I./yaml-cpp/include/ $(SRC_FILES) -o $@ -lstdc++ -lyaml-cpp -L./build/yaml-cpp/
 
-$(ROBOT_LIB): $(OBJS)
-	$(CXX_COMPILER) $(CXX_FLAGS) -shared -o $@ $^ -lstdc++ -lyaml-cpp -L./build/yaml-cpp/
+$(ROBOT_LIB): $(OBJS) yaml-cpp
+	$(CXX_COMPILER) $(CXX_FLAGS) -shared -o $@ $(OBJS) -lstdc++ -lyaml-cpp -L./build/yaml-cpp/
 
 build/shared:
 	mkdir -p build/shared
@@ -40,6 +40,13 @@ build/static:
 
 build/tests:
 	mkdir -p build/tests
+
+.PHONY: yaml-cpp
+yaml-cpp: build/yaml-cpp/libyaml-cpp.a
+
+build/yaml-cpp/libyaml-cpp.a:
+	cmake -S submodules/yaml-cpp/ -B build/yaml-cpp
+	cmake --build build/yaml-cpp/ --target yaml-cpp
 
 # TODO: build dependency files for each cpp
 build/shared/%.o: %.cpp | build/shared
@@ -53,8 +60,8 @@ build/static/%.o: %.cpp | build/static
 .PHONY: optimus_static
 optimus_static: build/static/liboptimus.a
 
-build/static/liboptimus.a: $(STATIC_OBJS)
-	ar rvs $@ $^
+build/static/liboptimus.a: $(STATIC_OBJS) yaml-cpp
+	ar rvs $@ $(STATIC_OBJS)
 
 .PHONY: optimus_test
 optimus_test: build/tests/optimus_test
@@ -86,3 +93,4 @@ atomic_test:
 .PHONY: clean
 clean:
 	rm -f build/*.o build/tests/* build/static/* build/shared/*
+	rm -rf build/yaml-cpp
